@@ -1,14 +1,20 @@
 pipeline {
     agent any
     stages {
+        stage("git"){
+            steps{
+                git url: 'https://github.com/Mayank8080/my-webapp.git', branch: 'main'
+
+            }
+        }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
-        stage('Deploy') {
+         stage('Deploy to Tomcat') {
             steps {
-                deploy adapters: [tomcat9()], credentialsId: '2b435cbe-343b-4a5a-8471-94f151003632', contextPath: '/', war: 'target/myapp.war', url: 'http://localhost:9006/'
+                deploy adapters: [tomcat9(credentialsId: 'TomcatCredentials', url: 'http://localhost:9006/')], contextPath: '/webapp', war: '**/*.war'
             }
         }
     }
